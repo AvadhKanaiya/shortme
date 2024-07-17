@@ -16,7 +16,7 @@ document.getElementById('shortenButton').addEventListener('click', async () => {
                 const shortURL = `https://shortme-backend.onrender.com/${data.id}`;
                 const resultElement = document.getElementById('result');
                 const copyElement = document.getElementById('copy');
-                const copy = await navigator.clipboard.writeText(shortURL);
+                await navigator.clipboard.writeText(shortURL);
                 resultElement.innerHTML = `<span style='color:red; font-weight:bold'>Shortened URL</span>:<span style='font-weight:bold'>${shortURL}</span>`;
                 if (copyElement) {
                     copyElement.innerHTML = `<span style='color:green; font-weight:bold'>URL has been copied to clipboard</span>`;
