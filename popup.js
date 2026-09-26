@@ -1,11 +1,23 @@
 const shortenButton = document.getElementById("shortenButton");
 const resultElement = document.getElementById("result");
 const copyElement = document.getElementById("copy");
+const messageTypes = [
+  "message-error",
+  "message-success",
+  "message-warning",
+  "message-info",
+];
+
+function setMessage(element, message, type) {
+  element.textContent = message;
+  element.classList.remove(...messageTypes);
+  if (type) element.classList.add(`message-${type}`);
+}
 
 shortenButton.addEventListener("click", async () => {
   shortenButton.disabled = true;
-  resultElement.textContent = "";
-  copyElement.textContent = "";
+  setMessage(resultElement, "");
+  setMessage(copyElement, "");
 
   try {
     const [currentTab] = await chrome.tabs.query({
@@ -33,14 +45,17 @@ shortenButton.addEventListener("click", async () => {
     }
 
     const shortURL = `https://shortme-backend.onrender.com/${data.id}`;
-    resultElement.textContent = `Shortened URL: ${shortURL}`;
+    setMessage(resultElement, `Shortened URL: ${shortURL}`, "success");
 
     try {
       await navigator.clipboard.writeText(shortURL);
-      copyElement.textContent = "URL copied to clipboard.";
+      setMessage(copyElement, "URL copied to clipboard.", "success");
     } catch {
-      copyElement.textContent =
-        "Could not copy automatically. Select and copy the URL above.";
+      setMessage(
+        copyElement,
+        "Could not copy automatically. Select and copy the URL above.",
+        "warning",
+      );
     }
 
     document.getElementById("shareOnWhatsApp").onclick = () => {
@@ -62,7 +77,11 @@ shortenButton.addEventListener("click", async () => {
       );
     };
   } catch (error) {
-    resultElement.textContent = error.message || "Unable to shorten this URL.";
+    setMessage(
+      resultElement,
+      error.message || "Unable to shorten this URL.",
+      "error",
+    );
   } finally {
     shortenButton.disabled = false;
   }
